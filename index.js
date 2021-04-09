@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 
 const app = express();
 
@@ -7,25 +8,26 @@ var persons = [
   {
     id: 1,
     name: "Arto Hellas",
-    number: "040-123456",
+    phoneNumber: "040-123456",
   },
   {
     id: 2,
     name: "Ada Lovelace",
-    number: "39-44-5323523",
+    phoneNumber: "39-44-5323523",
   },
   {
     id: 3,
     name: "Dan Abramov",
-    number: "12-43-234345",
+    phoneNumber: "12-43-234345",
   },
   {
     id: 4,
     name: "Mary Poppendick",
-    number: "39-23-6423122",
+    phoneNumber: "39-23-6423122",
   },
 ];
 
+app.use(cors());
 morgan.token("reqBody", (req, res) => {
   return JSON.stringify(req.body);
 });
@@ -43,7 +45,7 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  if (!req.body.name || !req.body.number) {
+  if (!req.body.name || !req.body.phoneNumber) {
     return res
       .status(400)
       .json({ error: "request is missing required fields" });
@@ -52,7 +54,11 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({ error: "name already exists" });
   }
   id = Math.floor(Math.random() * 100000);
-  const newPerson = { id, name: req.body.name, number: req.body.number };
+  const newPerson = {
+    id,
+    name: req.body.name,
+    phoneNumber: req.body.phoneNumber,
+  };
   persons.push(newPerson);
   res.status(201).json(newPerson);
 });
