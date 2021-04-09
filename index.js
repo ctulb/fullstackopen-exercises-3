@@ -25,10 +25,27 @@ var persons = [
   },
 ];
 
+app.use(express.json());
+
 const PORT = 3001;
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
+});
+
+app.post("/api/persons", (req, res) => {
+  if (!req.body.name || !req.body.number) {
+    return res
+      .status(400)
+      .json({ error: "request is missing required fields" });
+  }
+  if (persons.find((person) => person.name === req.body.name)) {
+    return res.status(400).json({ error: "name already exists" });
+  }
+  id = Math.floor(Math.random() * 100000);
+  const newPerson = { id, name: req.body.name, number: req.body.number };
+  persons.push(newPerson);
+  res.status(201).json(newPerson);
 });
 
 app.get("/api/persons/:id", (req, res) => {
