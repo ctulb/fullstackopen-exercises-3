@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 
 const app = express();
 
@@ -25,6 +26,7 @@ var persons = [
   },
 ];
 
+app.use(morgan("tiny"));
 app.use(express.json());
 
 const PORT = 3001;
