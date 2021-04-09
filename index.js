@@ -26,7 +26,14 @@ var persons = [
   },
 ];
 
-app.use(morgan("tiny"));
+morgan.token("reqBody", (req, res) => {
+  return JSON.stringify(req.body);
+});
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :reqBody"
+  )
+);
 app.use(express.json());
 
 const PORT = 3001;
