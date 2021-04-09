@@ -1,0 +1,27 @@
+{
+  "name": "fullstackopen-exercises-3",
+  "version": "0.0.1",
+  "description": "section 3 exercise submissions for the FullStackOpen course",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctulb/fullstackopen-exercises-3.git"
+  },
+  "author": "Leigh Butler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ctulb/fullstackopen-exercises-3/issues"
+  },
+  "homepage": "https://github.com/ctulb/fullstackopen-exercises-3#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
