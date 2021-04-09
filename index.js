@@ -38,7 +38,7 @@ app.use(
 );
 app.use(express.json());
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
