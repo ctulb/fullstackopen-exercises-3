@@ -5,6 +5,8 @@ const cors = require('cors');
 
 const app = express();
 
+const globalErrorHandler = require('./middleware/errorHandler');
+
 const Person = require('./models/person');
 
 app.use(cors());
@@ -21,67 +23,65 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
-app.get('/api/persons', (req, res) => {
+const createBadRequestError = (message) => {
+  const error = new Error(message);
+  error.name = 'BadRequestError';
+  return error;
+};
+
+app.get('/api/persons', (req, res, next) => {
   Person.find({})
-    .then((documents) => {
-      res.json(documents);
+    .then((persons) => {
+      res.json(persons);
     })
-    .catch((reason) => {
-      res.status(500).json({ error: reason });
-    });
+    .catch((error) => next(error));
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   if (!req.body.name || !req.body.phoneNumber) {
-    return res
-      .status(400)
-      .json({ error: 'request is missing required fields' });
-  }
-  Person.find({ name: req.body.name }).then((document) => {
-    if (Object.keys(document).length > 0) {
-      return res.status(400).json({ error: 'name already exists' });
-    }
-  });
-  const newPerson = new Person({
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-  });
-  newPerson
-    .save()
-    .then((document) => {
-      res.status(201).json(document);
-    })
-    .catch((reason) => {
-      res.status(500).json({ error: reason });
+    next(createBadRequestError('request missing required fields'));
+  } else {
+    Person.findOne({ name: req.body.name }).then((person) => {
+      if (person) {
+        next(createBadRequestError('name already exists'));
+      } else {
+        const newPerson = new Person({
+          name: req.body.name,
+          phoneNumber: req.body.phoneNumber,
+        });
+        newPerson
+          .save()
+          .then((person) => {
+            res.status(201).json(person);
+          })
+          .catch((error) => next(error));
+      }
     });
+  }
 });
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
   Person.findById(req.params.id)
-    .then((document) => {
-      if (document) {
-        return res.json(document);
+    .then((person) => {
+      if (person) {
+        return res.json(person);
       } else {
         return res.sendStatus(404);
       }
     })
-    .catch((reason) => {
-      res.status(500).json({ error: reason });
-    });
+    .catch((error) => next(error));
 });
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((document) => {
-      if (document) {
+    .then((person) => {
+      if (person) {
         res.sendStatus(204);
       } else {
         res.sendStatus(404);
       }
     })
-    .catch((reason) => {
-      res.status(500).json({ error: reason });
-    });
+    .catch((error) => next(error));
 });
 
 app.get('/info', (req, res) => {
@@ -94,6 +94,8 @@ app.get('/info', (req, res) => {
     }
   });
 });
+
+app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
