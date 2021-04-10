@@ -11,7 +11,7 @@ const Person = require('./models/person');
 
 app.use(cors());
 app.use(express.static('build'));
-morgan.token('reqBody', (req, res) => {
+morgan.token('reqBody', (req) => {
   return JSON.stringify(req.body);
 });
 app.use(
