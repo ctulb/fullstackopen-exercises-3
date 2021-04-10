@@ -12,7 +12,6 @@ const globalErrorHandler = (error, req, res, next) => {
       break;
     default:
       res.status(500).json({ error });
-      break;
   }
 };
 

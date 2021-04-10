@@ -26,11 +26,13 @@ const personSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    minLength: 3,
   },
   phoneNumber: {
     type: String,
     required: true,
     unique: true,
+    minLength: 8,
   },
 });
 personSchema.plugin(uniqueValidator);
