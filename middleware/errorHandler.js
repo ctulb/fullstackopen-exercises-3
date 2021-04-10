@@ -9,6 +9,7 @@ const globalErrorHandler = (error, req, res, next) => {
       break;
     case 'ValidationError':
       res.status(400).json({ error });
+      break;
     default:
       res.status(500).json({ error });
       break;
