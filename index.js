@@ -60,6 +60,7 @@ app.put('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
+    context: 'query',
   })
     .then((person) => {
       if (person) {
