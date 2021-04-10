@@ -72,6 +72,18 @@ app.get('/api/persons/:id', (req, res, next) => {
     .catch((error) => next(error));
 });
 
+app.put('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then((person) => {
+      if (person) {
+        return res.json(person);
+      } else {
+        return res.sendStatus(404);
+      }
+    })
+    .catch((error) => next(error));
+});
+
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then((person) => {
@@ -84,15 +96,13 @@ app.delete('/api/persons/:id', (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.get('/info', (req, res) => {
+app.get('/info', (req, res, next) => {
   const datestamp = new Date();
-  Person.countDocuments({}).then((err, count) => {
-    if (err) {
-      res.send('<p>Error retrieving phonebook data.</p>');
-    } else {
+  Person.countDocuments({})
+    .then((count) => {
       res.send(`<p>Phonebook has info for ${count} people</p><p>${datestamp}`);
-    }
-  });
+    })
+    .catch((error) => next(error));
 });
 
 app.use(globalErrorHandler);
