@@ -23,12 +23,6 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
-const createBadRequestError = (message) => {
-  const error = new Error(message);
-  error.name = 'BadRequestError';
-  return error;
-};
-
 app.get('/api/persons', (req, res, next) => {
   Person.find({})
     .then((persons) => {
@@ -38,26 +32,16 @@ app.get('/api/persons', (req, res, next) => {
 });
 
 app.post('/api/persons', (req, res, next) => {
-  if (!req.body.name || !req.body.phoneNumber) {
-    next(createBadRequestError('request missing required fields'));
-  } else {
-    Person.findOne({ name: req.body.name }).then((person) => {
-      if (person) {
-        next(createBadRequestError('name already exists'));
-      } else {
-        const newPerson = new Person({
-          name: req.body.name,
-          phoneNumber: req.body.phoneNumber,
-        });
-        newPerson
-          .save()
-          .then((person) => {
-            res.status(201).json(person);
-          })
-          .catch((error) => next(error));
-      }
-    });
-  }
+  const newPerson = new Person({
+    name: req.body.name,
+    phoneNumber: req.body.phoneNumber,
+  });
+  newPerson
+    .save()
+    .then((person) => {
+      res.status(201).json(person);
+    })
+    .catch((error) => next(error));
 });
 
 app.get('/api/persons/:id', (req, res, next) => {

@@ -7,9 +7,8 @@ const globalErrorHandler = (error, req, res, next) => {
     case 'CastError':
       res.status(400).json({ error: 'malformed id in request' });
       break;
-    case 'BadRequestError':
-      res.status(400).json({ error: error.message });
-      break;
+    case 'ValidationError':
+      res.status(400).json({ error });
     default:
       res.status(500).json({ error });
       break;

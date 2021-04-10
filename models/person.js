@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 if (!process.env.MONGODB_CONNECTION_STRING) {
   console.error('MongoDB connection string could not be configured');
@@ -21,9 +22,18 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  phoneNumber: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
+personSchema.plugin(uniqueValidator);
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
